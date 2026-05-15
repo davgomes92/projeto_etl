@@ -19,4 +19,4 @@ O projeto foi desenhado para ser totalmente reproduzível num computador pessoal
 1. **Clonar o repositório e aceder à pasta:**
    ```bash
    git clone <url-do-teu-repositorio>
-   cd meu_projeto_etl
+   cd projeto_etl
