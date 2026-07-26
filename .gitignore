@@ -3,3 +3,11 @@ venv/
 logs/
 data/raw/*.csv
 __pycache__/
+
+data/raw/*.json
+data/staging/
+data/curated/
+data/database.sqlite
+
+.DS_Store
+data/.DS_Store
