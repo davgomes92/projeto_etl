@@ -99,19 +99,35 @@ if __name__ == "__main__":
     # Inicializa o logger
     setup_logging()
     
-    # Define a cidade alvo (isto poderia vir de uma lista ou argumento de linha de comandos)
-    TARGET_CITY = "Covilha"
+    # Lista de cidades alvo. Devem coincidir (mesmo nome) com as cidades
+    # presentes no dataset histórico (sample_temperatures.csv) para permitir
+    # o cruzamento correto na fase de Transform.
+    TARGET_CITIES = ["Covilha", "Lisbon", "Porto", "Madrid", "Paris"]
     
-    try:
-        logging.info("Início do processo de extração (Extract).")
-        
-        # 1. Extrair
-        raw_weather_data = get_weather_data(TARGET_CITY)
-        
-        # 2. Guardar (sem alterações destrutivas)
-        save_raw_data(raw_weather_data, TARGET_CITY)
-        
-        logging.info("Processo de extração concluído com sucesso.")
-        
-    except Exception as e:
-        logging.critical(f"O pipeline de extração falhou: {e}")
+    logging.info("Início do processo de extração (Extract).")
+    
+    sucesso_count = 0
+    falha_count = 0
+    
+    for city in TARGET_CITIES:
+        try:
+            # 1. Extrair
+            raw_weather_data = get_weather_data(city)
+            
+            # 2. Guardar (sem alterações destrutivas)
+            save_raw_data(raw_weather_data, city)
+            
+            sucesso_count += 1
+            
+        except Exception as e:
+            # Isola a falha de uma cidade para não interromper a extração das restantes
+            logging.error(f"Falha ao extrair dados para '{city}': {e}")
+            falha_count += 1
+    
+    logging.info(
+        f"Processo de extração concluído. Sucesso: {sucesso_count}/{len(TARGET_CITIES)} "
+        f"cidades. Falhas: {falha_count}."
+    )
+    
+    if sucesso_count == 0:
+        logging.critical("O pipeline de extração falhou para todas as cidades.")
